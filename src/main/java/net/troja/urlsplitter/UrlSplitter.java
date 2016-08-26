@@ -181,4 +181,37 @@ public class UrlSplitter {
     public Map<String, String> getQueryMap() {
         return queryMap;
     }
+
+    public String buildUrl() {
+        final StringBuilder builder = new StringBuilder();
+        if (!StringUtils.isEmpty(protocol)) {
+            builder.append(protocol).append("://");
+        }
+        if (!StringUtils.isEmpty(user)) {
+            builder.append(user);
+        }
+        if (!StringUtils.isEmpty(password)) {
+            builder.append(":").append(password);
+        }
+        if (!StringUtils.isEmpty(user) || !StringUtils.isEmpty(password)) {
+            builder.append("@");
+        }
+        if (!StringUtils.isEmpty(host)) {
+            builder.append(host);
+        }
+        if ((port != null) && !(PROTOCOL_FTP.equals(protocol) && (port == PORT_FTP)) && !(PROTOCOL_HTTP.equals(protocol) && (port == PORT_HTTP))
+                && !(PROTOCOL_HTTPS.equals(protocol) && (port == PORT_HTTPS))) {
+            builder.append(":").append(port);
+        }
+        if (!StringUtils.isEmpty(path)) {
+            builder.append("/").append(path);
+        }
+        if (!StringUtils.isEmpty(query)) {
+            builder.append("?").append(query);
+        }
+        if (!StringUtils.isEmpty(fragment)) {
+            builder.append("#").append(fragment);
+        }
+        return builder.toString();
+    }
 }
