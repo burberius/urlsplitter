@@ -1,6 +1,6 @@
 # Url Splitter - The library for URL splitting
 
-With this library you can split all kinds of urls in there parts.
+With this library you can split all kinds of URLs in their parts.
 
 ## Usage
 
@@ -18,6 +18,19 @@ UrlSplitter splitter = new UrlSplitter();
 splitter.split("mailto:maxmuster@example.com");
 String email = splitter.getPath();
 ```
+
+## Result parts of a split
+The default is an empty string or null in case of the port. Each part can be accessed with a getter, like in the examples above.
+
+- protocol 
+- user
+- password
+- host = domain or ip
+- port 
+- path
+- fragment = the navigation fragment (#fragment)
+- query = the complete query part (?examplequery)
+- queryMap = the query part split up and parsed into a map for easier access
 
 ## Build
 To build this library you need maven and then you can run:

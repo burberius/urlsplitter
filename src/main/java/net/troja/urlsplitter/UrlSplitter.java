@@ -1,8 +1,10 @@
 package net.troja.urlsplitter;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,15 +25,22 @@ public class UrlSplitter {
     private String host;
     private Integer port;
     private String path;
+    private String fragment;
+    private String query;
 
     private final Pattern protocolPattern;
     private final Pattern userPasswordPattern;
     private final Pattern hostPattern;
+    private final Pattern fragmentPattern;
+    private final Pattern queryPattern;
+    private final Map<String, String> queryMap = new HashMap<String, String>();
 
     public UrlSplitter() {
-        protocolPattern = Pattern.compile("^([a-z]+):/*(.+)$");
+        protocolPattern = Pattern.compile("^([a-zA-Z]+):/*(.+)$");
         userPasswordPattern = Pattern.compile("^([^:]+):?(.*?)@(.+)$");
         hostPattern = Pattern.compile("^([-.a-z0-9]+):?(\\d*)/?(.*)$");
+        fragmentPattern = Pattern.compile("^(.*)#(.+)$");
+        queryPattern = Pattern.compile("^(.*)\\?(.+)$");
     }
 
     public void split(final String url) {
@@ -41,11 +50,12 @@ public class UrlSplitter {
             return;
         }
 
-        String work = url.toLowerCase(Locale.ENGLISH);
-        work = extractProtocol(work);
+        String work = extractProtocol(url);
         if (PROTOCOLS.contains(protocol) || protocol.isEmpty()) {
             work = extractUserAndPassword(work);
-            work = extractHostPortPath(work);
+            work = extractFragment(work);
+            work = extractQuery(work);
+            work = extractHostPortPath(work.toLowerCase(Locale.ENGLISH));
 
             if (port == null) {
                 if (PROTOCOL_HTTP.equals(protocol)) {
@@ -59,6 +69,35 @@ public class UrlSplitter {
         } else {
             path = work;
         }
+    }
+
+    private String extractQuery(final String work) {
+        final Matcher matcher = queryPattern.matcher(work);
+        String result = work;
+        if (matcher.matches()) {
+            query = matcher.group(2);
+            result = matcher.group(1);
+            splitQuery();
+        }
+        return result;
+    }
+
+    private void splitQuery() {
+        final String[] split = query.split("&");
+        for (final String pair : split) {
+            final String[] keyValue = pair.split("=");
+            queryMap.put(keyValue[0], keyValue[1]);
+        }
+    }
+
+    private String extractFragment(final String work) {
+        final Matcher matcher = fragmentPattern.matcher(work);
+        String result = work;
+        if (matcher.matches()) {
+            fragment = matcher.group(2);
+            result = matcher.group(1);
+        }
+        return result;
     }
 
     private String extractHostPortPath(final String work) {
@@ -89,7 +128,7 @@ public class UrlSplitter {
         final Matcher matcher = protocolPattern.matcher(work);
         String result = work;
         if (matcher.matches()) {
-            protocol = matcher.group(1);
+            protocol = matcher.group(1).toLowerCase(Locale.ENGLISH);
             result = matcher.group(2);
         }
         return result;
@@ -102,6 +141,9 @@ public class UrlSplitter {
         host = "";
         port = null;
         path = "";
+        fragment = "";
+        query = "";
+        queryMap.clear();
     }
 
     public String getProtocol() {
@@ -126,5 +168,17 @@ public class UrlSplitter {
 
     public String getPath() {
         return path;
+    }
+
+    public String getFragment() {
+        return fragment;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public Map<String, String> getQueryMap() {
+        return queryMap;
     }
 }

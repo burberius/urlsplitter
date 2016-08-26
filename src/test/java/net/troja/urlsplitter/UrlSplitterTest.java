@@ -1,9 +1,14 @@
 package net.troja.urlsplitter;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +24,11 @@ public class UrlSplitterTest {
     private static final String USER = "resu";
     private static final String PASSWORD = "topsecret";
     private static final String FILE = "c:/verzeichnis/unterverzeichnis/datei.txt";
+    private static final String FRAGMENT = "destination";
+    private static final String KEY_1 = "firstname";
+    private static final String VALUE_1 = "Donald";
+    private static final String KEY_2 = "lastname";
+    private static final String VALUE_2 = "Duck";
 
     private UrlSplitter classToTest;
 
@@ -123,6 +133,26 @@ public class UrlSplitterTest {
         assertThat(classToTest.getProtocol(), is(equalTo(UrlSplitter.PROTOCOL_HTTPS)));
         assertThat(classToTest.getHost(), is(equalTo(DOMAIN)));
         assertThat(classToTest.getPort(), is(equalTo(UrlSplitter.PORT_HTTPS)));
+    }
+
+    @Test
+    public void httpWithPathAndFragment() {
+        classToTest.split(UrlSplitter.PROTOCOL_HTTP + "://" + DOMAIN + "/" + SOME_PATH + "#" + FRAGMENT);
+
+        assertThat(classToTest.getFragment(), is(equalTo(FRAGMENT)));
+    }
+
+    @Test
+    public void httpWithPathAndQuery() {
+        final String query = KEY_1 + "=" + VALUE_1 + "&" + KEY_2 + "=" + VALUE_2;
+        final Map<String, String> queryMap = new HashMap<String, String>();
+        queryMap.put(KEY_1, VALUE_1);
+        queryMap.put(KEY_2, VALUE_2);
+
+        classToTest.split(UrlSplitter.PROTOCOL_HTTP + "://" + DOMAIN + "/" + SOME_PATH + "?" + query);
+
+        assertThat(classToTest.getQuery(), is(equalTo(query)));
+        assertThat(classToTest.getQueryMap().entrySet(), everyItem(isIn(queryMap.entrySet())));
     }
 
     @Test
