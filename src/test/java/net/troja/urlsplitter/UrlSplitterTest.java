@@ -6,16 +6,19 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class UrlSplitterTest {
+    private static final String PROTOCOL_MAILTO = "mailto";
+    private static final String PROTOCOL_FILE = "file";
+    private static final String EMAIL = "donald@mailinator.com";
     private static final String IP = "127.0.0.1";
     private static final String DOMAIN = "www.troja.net";
     private static final String DOMAIN_CAPS = "wWw.TrOjA.nEt";
     private static final String SOME_PATH = "a-long/path";
     private static final String USER = "resu";
     private static final String PASSWORD = "topsecret";
+    private static final String FILE = "c:/verzeichnis/unterverzeichnis/datei.txt";
 
     private UrlSplitter classToTest;
 
@@ -130,15 +133,28 @@ public class UrlSplitterTest {
         assertThat(classToTest.getProtocol(), not(equalTo(UrlSplitter.PROTOCOL_HTTP)));
     }
 
-    @Ignore
     @Test
-    public void file() {
+    public void ftp() {
+        classToTest.split(UrlSplitter.PROTOCOL_FTP + "://" + USER + ":" + PASSWORD + "@" + DOMAIN);
 
+        assertThat(classToTest.getProtocol(), is(equalTo(UrlSplitter.PROTOCOL_FTP)));
+        assertThat(classToTest.getPassword(), is(equalTo(PASSWORD)));
+        assertThat(classToTest.getPort(), is(equalTo(UrlSplitter.PORT_FTP)));
     }
 
-    @Ignore
+    @Test
+    public void file() {
+        classToTest.split(PROTOCOL_FILE + ":///" + FILE);
+
+        assertThat(classToTest.getProtocol(), is(equalTo(PROTOCOL_FILE)));
+        assertThat(classToTest.getPath(), is(equalTo(FILE)));
+    }
+
     @Test
     public void mailto() {
+        classToTest.split(PROTOCOL_MAILTO + ":" + EMAIL);
 
+        assertThat(classToTest.getProtocol(), is(equalTo(PROTOCOL_MAILTO)));
+        assertThat(classToTest.getPath(), is(equalTo(EMAIL)));
     }
 }

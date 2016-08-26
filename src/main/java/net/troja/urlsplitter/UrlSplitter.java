@@ -1,5 +1,7 @@
 package net.troja.urlsplitter;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,8 +10,11 @@ import org.apache.commons.lang3.StringUtils;
 public class UrlSplitter {
     public static final String PROTOCOL_HTTP = "http";
     public static final String PROTOCOL_HTTPS = "https";
+    public static final String PROTOCOL_FTP = "ftp";
+    private static final List<String> PROTOCOLS = Arrays.asList(new String[] { PROTOCOL_HTTP, PROTOCOL_HTTPS, PROTOCOL_FTP });
     public static final int PORT_HTTP = 80;
     public static final int PORT_HTTPS = 443;
+    public static final int PORT_FTP = 21;
 
     private String protocol;
     private String user;
@@ -37,15 +42,21 @@ public class UrlSplitter {
 
         String work = url.toLowerCase();
         work = extractProtocol(work);
-        work = extractUserAndPassword(work);
-        work = extractHostPortPath(work);
+        if (PROTOCOLS.contains(protocol) || protocol.isEmpty()) {
+            work = extractUserAndPassword(work);
+            work = extractHostPortPath(work);
 
-        if (port == null) {
-            if (PROTOCOL_HTTP.equals(protocol)) {
-                port = PORT_HTTP;
-            } else if (PROTOCOL_HTTPS.equals(protocol)) {
-                port = PORT_HTTPS;
+            if (port == null) {
+                if (PROTOCOL_HTTP.equals(protocol)) {
+                    port = PORT_HTTP;
+                } else if (PROTOCOL_HTTPS.equals(protocol)) {
+                    port = PORT_HTTPS;
+                } else if (PROTOCOL_FTP.equals(protocol)) {
+                    port = PORT_FTP;
+                }
             }
+        } else {
+            path = work;
         }
     }
 
