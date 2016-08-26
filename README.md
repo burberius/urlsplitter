@@ -39,5 +39,6 @@ To build this library you need maven and then you can run:
 mvn clean install
 ```
 
-## Code Quality
-[SonarQube result](http://didge-sonar.my-wan.de/overview?id=net.troja%3Aurlsplitter)
+## Links
+- [Build system](http://didge.my-wan.de/jenkins/job/GitHub%20urlsplitter)
+- [SonarQube result](http://didge-sonar.my-wan.de/overview?id=net.troja%3Aurlsplitter)
