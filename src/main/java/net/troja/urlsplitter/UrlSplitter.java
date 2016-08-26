@@ -2,6 +2,7 @@ package net.troja.urlsplitter;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,10 +12,10 @@ public class UrlSplitter {
     public static final String PROTOCOL_HTTP = "http";
     public static final String PROTOCOL_HTTPS = "https";
     public static final String PROTOCOL_FTP = "ftp";
-    private static final List<String> PROTOCOLS = Arrays.asList(new String[] { PROTOCOL_HTTP, PROTOCOL_HTTPS, PROTOCOL_FTP });
     public static final int PORT_HTTP = 80;
     public static final int PORT_HTTPS = 443;
     public static final int PORT_FTP = 21;
+    private static final List<String> PROTOCOLS = Arrays.asList(new String[] { PROTOCOL_HTTP, PROTOCOL_HTTPS, PROTOCOL_FTP });
 
     private String protocol;
     private String user;
@@ -40,7 +41,7 @@ public class UrlSplitter {
             return;
         }
 
-        String work = url.toLowerCase();
+        String work = url.toLowerCase(Locale.ENGLISH);
         work = extractProtocol(work);
         if (PROTOCOLS.contains(protocol) || protocol.isEmpty()) {
             work = extractUserAndPassword(work);
