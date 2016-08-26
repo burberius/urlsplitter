@@ -6,10 +6,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 public class UrlSplitter {
-    static final String PROTOCOL_HTTP = "http";
-    static final String PROTOCOL_HTTPS = "https";
-    static final int PORT_HTTP = 80;
-    static final int PORT_HTTPS = 443;
+    public static final String PROTOCOL_HTTP = "http";
+    public static final String PROTOCOL_HTTPS = "https";
+    public static final int PORT_HTTP = 80;
+    public static final int PORT_HTTPS = 443;
 
     private String protocol;
     private String user;
@@ -53,8 +53,9 @@ public class UrlSplitter {
         final Matcher matcher = hostPattern.matcher(work);
         if (matcher.matches()) {
             host = matcher.group(1);
-            if (!StringUtils.isEmpty(matcher.group(2))) {
-                port = Integer.parseInt(matcher.group(2));
+            final String portString = matcher.group(2);
+            if (!StringUtils.isEmpty(portString)) {
+                port = Integer.valueOf(portString);
             }
             path = matcher.group(3);
         }
@@ -63,21 +64,23 @@ public class UrlSplitter {
 
     private String extractUserAndPassword(final String work) {
         final Matcher matcher = userPasswordPattern.matcher(work);
+        String result = work;
         if (matcher.matches()) {
             user = matcher.group(1);
             password = matcher.group(2);
-            return matcher.group(3);
+            result = matcher.group(3);
         }
-        return work;
+        return result;
     }
 
     private String extractProtocol(final String work) {
         final Matcher matcher = protocolPattern.matcher(work);
+        String result = work;
         if (matcher.matches()) {
             protocol = matcher.group(1);
-            return matcher.group(2);
+            result = matcher.group(2);
         }
-        return work;
+        return result;
     }
 
     private void reset() {

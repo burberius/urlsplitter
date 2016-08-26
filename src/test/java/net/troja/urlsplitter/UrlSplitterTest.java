@@ -108,7 +108,6 @@ public class UrlSplitterTest {
     public void domainWithUserPassword() {
         classToTest.split(UrlSplitter.PROTOCOL_HTTP + "://" + USER + ":" + PASSWORD + "@" + DOMAIN);
 
-        assertThat(classToTest.getProtocol(), is(equalTo(UrlSplitter.PROTOCOL_HTTP)));
         assertThat(classToTest.getHost(), is(equalTo(DOMAIN)));
         assertThat(classToTest.getUser(), is(equalTo(USER)));
         assertThat(classToTest.getPassword(), is(equalTo(PASSWORD)));

@@ -8,3 +8,6 @@ To build this library you need maven and then you can run:
 ```shell
 mvn clean install
 ```
+
+## Code Quality
+[SonarQube result](http://didge-sonar.my-wan.de/overview?id=net.troja%3Aurlsplitter)
